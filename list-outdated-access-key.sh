@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Check the first argument is numeric
+# ref. https://stackoverflow.com/questions/4137262/is-there-an-easy-way-to-determine-if-user-input-is-an-integer-in-bash
+if [ $(($1)) != "$1" ]; then
+  echo "$0: <retention_hours>($1) must be numeric"
+  exit 1
+fi
+
 export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
 
