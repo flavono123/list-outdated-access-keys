@@ -2,7 +2,7 @@
 
 # Check the first argument is numeric
 # ref. https://stackoverflow.com/questions/4137262/is-there-an-easy-way-to-determine-if-user-input-is-an-integer-in-bash
-if [ $(($1)) != "$1" ]; then
+if [ -n "$1" ] && [ $(($1)) != "$1" ]; then
   echo "$0: <retention_hours>($1) must be numeric"
   exit 1
 fi
