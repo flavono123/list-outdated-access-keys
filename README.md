@@ -79,6 +79,23 @@ Server: Docker Desktop 4.12.0 (85629)
 
 ```
 
+### Minikube(k8s)
+```sh
+## (macOS specific) Use driver mounts with host and confirm to connect the node(minikube VM) to internet ,**hyperkit** recommended.
+❯ minikube start --driver=hyperkit --mount --mount-string <macos_host_path>:<minikube_node_path>
+# e.g. minikube start --driver=hyperkit --mount --mount-string $PWD/results:/results
+
+## Create the secret `aws'
+❯ kubectl create secret generic aws \
+    --from-literal AWS_ACCESS_KEY_ID=xxx... \
+    --from-literal AWS_SECRET_ACCESS_KEY=xxx...
+# or use the template
+❯ BASE64_AWS_ACCESS_KEY_ID=$(echo -n "$AWS_ACCESS_KEY_ID" | base64) \
+  BASE64_AWS_SECRET_ACCESS_KEY=$(echo -n "$AWS_SECRET_ACCES_KEY" | base64) \
+    envsubst < manifests/secrets/aws.yaml | \
+  k apply -f -
+```
+
 ## Usage
 ```sh
 ❯ export AWS_ACCESS_KEY_ID=xxx...
@@ -95,10 +112,21 @@ Server: Docker Desktop 4.12.0 (85629)
   -e AWS_SECRET_ACCESS_KEY \
   -v "$(pwd)"/results:/results \
   list-outdated-access-keys:latest [<retention_hours>]
+
+# Minikube(k8s)
+❯ RETENTION_HOURS=<retention_hours> \
+  HOST_PATH=<minikube_node_path> \
+    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
+  k apply -f -
+# e.g.
+#  RETENTION_HOURS=2400 \
+#  HOST_PATH=/results \
+#    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
+#  k apply -f -
 ```
 
 ## Outputs
-- `$WORKDIR/results/<retention_ts>/<iam_user_name>.json`
+- `($WORKDIR/results|<mounted_host_path>)/<retention_ts>/<iam_user_name>.json`
   - `<retention_ts>` is the timestamp of the retention monment(UTC) which format is %Y%m%d%H%M%S(e.g. 20220101185723), and a parent directory of result files
   - `<iam_user_name>` is the user name of IAM who has IAM Access keys in the files
 - Output file format: `<aws_iam_access_key> - <create_date> ...` (e.g 2022-06-17T05:30:24Z - AKIAQWOA54DNYICYVQQM)

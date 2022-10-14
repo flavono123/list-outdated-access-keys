@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  name: list-outdated-access-keys-daily
+spec:
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+      name: list-outdated-access-keys-daily
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: AWS_SECRET_ACCESS_KEY
+            image: vonogoru123/list-outdated-access-keys:latest
+            name: list-outdated-access-keys-daily
+            args:
+            - "$RETENTION_HOURS"
+            resources: {}
+            volumeMounts:
+            - mountPath: /results
+              name: results
+          restartPolicy: OnFailure
+          volumes:
+          - hostPath:
+              path: $HOST_PATH
+            name: results
+  schedule: '00 00 * * *' # choose the time of days
+status: {}
