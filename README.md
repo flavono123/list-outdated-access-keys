@@ -1,12 +1,57 @@
 # list-outdated-access-key.sh
 
-## Prerequisuite
-### Script
+## Usage
+### Common
+```sh
+❯ export AWS_ACCESS_KEY_ID=xxx...
+❯ export AWS_SECRET_ACCESS_KEY=xxx...
+# or login with `aws configure`
+# (Only for the script execution, mount it to a container for docker or minikube way)
+
+# args: <retention_hours> (integer, default: 0)
+```
+
+### Shell Script
+```sh
+❯ sh list-outdated-access-key.sh [<retention_hours>]
+# e.g. sh list-outdated-access-key.sh 2400 # list access keys created before 100 days ago
+```
+
+### Docker
+```sh
+❯ docker run \
+  -e AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY \
+  -v "$(pwd)"/results:/results \
+  list-outdated-access-keys:0.1.0 [<retention_hours>]
+# e.g.
+# docker run \
+#  -e AWS_ACCESS_KEY_ID \
+#  -e AWS_SECRET_ACCESS_KEY \
+#  -v "$(pwd)"/results:/results \
+#  list-outdated-access-keys:0.1.0 2400
+```
+
+### Minikube(k8s)
+```sh
+❯ RETENTION_HOURS=<retention_hours> \
+  HOST_PATH=<minikube_node_path> \
+    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
+  k apply -f -
+# e.g.
+#  RETENTION_HOURS=2400 \
+#  HOST_PATH=/results \
+#    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
+#  k apply -f -
+```
+
+
+## Dependencies(prerequisuite & enviornments)
 - MacOS(Only tested)
 - Internet connection
-- AWS Access Key Id / Secret Access Key Pair
-- Dependencies
+- AWS Access Key Id / Secret Access Key Pair (Follow 'Usage > Common' to set)
 
+### Script
 ```sh
 # awscli <~ 1.25.90
 ❯ aws --version
@@ -39,7 +84,6 @@ Written by Eric B. Decker, James Youngman, and Kevin Dalley.
 ```
 
 ### Docker
-- Docker
 ```sh
 ❯ docker version
 Client:
@@ -75,17 +119,18 @@ Server: Docker Desktop 4.12.0 (85629)
 # Build
 ❯ docker build -t <tag> -f Dockerfile .
 ...
-# or pull latest image
+# or pull the latest image
 
 ```
 
 ### Minikube(k8s)
 ```sh
-## (macOS specific) Use driver mounts with host and confirm to connect the node(minikube VM) to internet ,**hyperkit** recommended.
+# (macOS specific) Use driver mounts with host and confirm to connect the node(minikube VM) to internet,
+# [**hyperkit**](https://minikube.sigs.k8s.io/docs/drivers/hyperkit/) recommended.
 ❯ minikube start --driver=hyperkit --mount --mount-string <macos_host_path>:<minikube_node_path>
 # e.g. minikube start --driver=hyperkit --mount --mount-string $PWD/results:/results
 
-## Create the secret `aws'
+# Create the secret `aws'
 ❯ kubectl create secret generic aws \
     --from-literal AWS_ACCESS_KEY_ID=xxx... \
     --from-literal AWS_SECRET_ACCESS_KEY=xxx...
@@ -96,36 +141,7 @@ Server: Docker Desktop 4.12.0 (85629)
   k apply -f -
 ```
 
-## Usage
-```sh
-❯ export AWS_ACCESS_KEY_ID=xxx...
-❯ export AWS_SECRET_ACCESS_KEY=xxx...
-# or login with `aws configure` (Only for the script execution)
-
-# Script
-❯ sh list-outdated-access-key.sh [<retention_hours>]
-# args: <retention_hours> (integer, default: 0)
-
-# Docker
-❯ docker run \
-  -e AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY \
-  -v "$(pwd)"/results:/results \
-  list-outdated-access-keys:latest [<retention_hours>]
-
-# Minikube(k8s)
-❯ RETENTION_HOURS=<retention_hours> \
-  HOST_PATH=<minikube_node_path> \
-    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
-  k apply -f -
-# e.g.
-#  RETENTION_HOURS=2400 \
-#  HOST_PATH=/results \
-#    envsubst < manifests/cronjobs/list-outdated-access-keys-daily.yaml | \
-#  k apply -f -
-```
-
-## Outputs
+## Output
 - `($WORKDIR/results|<mounted_host_path>)/<retention_ts>/<iam_user_name>.json`
   - `<retention_ts>` is the timestamp of the retention monment(UTC) which format is %Y%m%d%H%M%S(e.g. 20220101185723), and a parent directory of result files
   - `<iam_user_name>` is the user name of IAM who has IAM Access keys in the files
