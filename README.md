@@ -126,7 +126,7 @@ Server: Docker Desktop 4.12.0 (85629)
 ### Minikube(k8s)
 ```sh
 # (macOS specific) Use driver mounts with host and confirm to connect the node(minikube VM) to internet,
-# [**hyperkit**](https://minikube.sigs.k8s.io/docs/drivers/hyperkit/) recommended.
+# **[hyperkit](https://minikube.sigs.k8s.io/docs/drivers/hyperkit/)** is recommended.
 ❯ minikube start --driver=hyperkit --mount --mount-string <macos_host_path>:<minikube_node_path>
 # e.g. minikube start --driver=hyperkit --mount --mount-string $PWD/results:/results
 
