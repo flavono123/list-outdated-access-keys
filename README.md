@@ -23,13 +23,13 @@
   -e AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY \
   -v "$(pwd)"/results:/results \
-  list-outdated-access-keys:0.1.0 [<retention_hours>]
+  vonogoru123/list-outdated-access-keys:0.1.0 [<retention_hours>]
 # e.g.
 # docker run \
 #  -e AWS_ACCESS_KEY_ID \
 #  -e AWS_SECRET_ACCESS_KEY \
 #  -v "$(pwd)"/results:/results \
-#  list-outdated-access-keys:0.1.0 2400
+#  vonogoru123/list-outdated-access-keys:0.1.0 2400
 ```
 
 ### Minikube(k8s)
