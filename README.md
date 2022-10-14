@@ -146,3 +146,21 @@ Server: Docker Desktop 4.12.0 (85629)
   - `<retention_ts>` is the timestamp of the retention monment(UTC) which format is %Y%m%d%H%M%S(e.g. 20220101185723), and a parent directory of result files
   - `<iam_user_name>` is the user name of IAM who has IAM Access keys in the files
 - Output file format: `<aws_iam_access_key> - <create_date> ...` (e.g 2022-06-17T05:30:24Z - AKIAQWOA54DNYICYVQQM)
+
+```sh
+# e.g.
+❯ tree results/20220101010514/
+results/20220101010514/
+├── Test10
+├── Test2
+├── Test5
+├── Test6
+├── Test8
+├── Test9
+├── chloe.kim
+├── hojin.shim
+├── jonny.koo
+└── youngwoo.kim
+
+0 directories, 10 files
+```
