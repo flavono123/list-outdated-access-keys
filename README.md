@@ -6,7 +6,7 @@
 ❯ export AWS_ACCESS_KEY_ID=xxx...
 ❯ export AWS_SECRET_ACCESS_KEY=xxx...
 # or login with `aws configure`
-# (Only for the script execution, mount it to a container for docker or minikube way)
+# (Only for the script execution, mount it to a container for a docker or a minikube way)
 
 # args: <retention_hours> (integer, default: 0)
 ```
@@ -17,7 +17,7 @@
 # e.g. sh list-outdated-access-key.sh 2400 # list access keys created before 100 days ago
 ```
 
-### Docker
+### Container
 ```sh
 ❯ docker run \
   -e AWS_ACCESS_KEY_ID \
@@ -31,6 +31,7 @@
 #  -v "$(pwd)"/results:/results \
 #  vonogoru123/list-outdated-access-keys:0.1.0 2400
 ```
+- repo: https://hub.docker.com/repository/docker/vonogoru123/list-outdated-access-keys
 
 ### Minikube(k8s)
 ```sh
@@ -46,12 +47,12 @@
 ```
 
 
-## Dependencies(prerequisuite & enviornments)
+## Dependencies(prerequisuites & enviornments)
 - MacOS(Only tested)
 - Internet connection
 - AWS Access Key Id / Secret Access Key Pair (Follow 'Usage > Common' to set)
 
-### Script
+### Shell Script
 ```sh
 # awscli <~ 1.25.90
 ❯ aws --version
@@ -143,9 +144,9 @@ Server: Docker Desktop 4.12.0 (85629)
 
 ## Output
 - `($WORKDIR/results|<mounted_host_path>)/<retention_ts>/<iam_user_name>.json`
-  - `<retention_ts>` is the timestamp of the retention monment(UTC) which format is %Y%m%d%H%M%S(e.g. 20220101185723), and a parent directory of result files
+  - `<retention_ts>` is the timestamp of the retention moment(UTC) which format is %Y%m%d%H%M%S(e.g. 20220101185723), and a parent directory of result files
   - `<iam_user_name>` is the user name of IAM who has IAM Access keys in the files
-- Output file format: `<aws_iam_access_key> - <create_date> ...` (e.g 2022-06-17T05:30:24Z - AKIAQWOA54DNYICYVQQM)
+- Output file format: `<aws_iam_access_key> - <create_date> ...` (e.g 2022-06-17T05:30:24Z - AKIA...)
 
 ```sh
 # e.g.
